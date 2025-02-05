@@ -23,8 +23,13 @@ library(emmeans)
 
 ## Fig. 5 b) Analysis of PM localisation of CbPINa and CbPINc
 
+Detailed protocol was published in Vosolsobě, S., Schwarzerová, K., Petrášek, J. (2018): Determination of Plasma Membrane Partitioning for Peripherally-associated Proteins. JoVE (Journal of Visualized Experiments) (136), e57837
+
 ```r
 profile <- read.profile(file="Results.csv")
+
+# Now, the model of PM and cytoplasmic distribution based on previuos analysis is loaded
+# For details, follow the protocol in http://kfrserver.natur.cuni.cz/lide/vosolsob/Peripheral/
 load("model.RData")
 
 filtered <- profile
