@@ -57,6 +57,9 @@ legend("topleft",horiz=F,border = NA, seg.len=4, fill = col, legend = emvar[xo],
 dev.off()
 ```
 
+![Boxplot of shoot numbers](Treatments_all_shoots.pdf)
+
+
 
 ## Analysis of the length of regenerated shoots
 
@@ -96,4 +99,4 @@ legend("topleft",horiz=F,border = NA, seg.len=4, fill = col, legend = emvar[xo],
 dev.off()
 ```
 
-
+![Boxplot of shoot lengths](Treatments_all_length.pdf)
