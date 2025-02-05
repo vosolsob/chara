@@ -1,6 +1,6 @@
 ---
-Title: Auxin effect on Chara braunii
-Author: "Katarina Kurtovic, Jan Petrášek & Stanislav Vosolsobě"
+Title: The role of IAA and characterization of PIN transporters in complex streptophyte alga Chara braunii
+Author: "Katarina Kurtović, Stanislav Vosolsobě, Daniel Nedvěd, Karel Müller, Petre Dobrev, Vojtěch Schmidt, Piotr Piszczek, Andre Kuhn, Adrijana Smoljan, Tom J. Fisher, Dolf Weijers, Jiří Friml, John L. Bowman & Jan Petrášek"
 output:
   html_document:
   df_print: paged
@@ -8,7 +8,7 @@ word_document: default
 pdf_document: default
 ---
   
-# AUXIN EFFECT ON *CHARA BRAUNII*
+# AUXIN EFFECT ON *CHARA BRAUNII* SHOOT REGENERATION
   
 ### R code by Stanislav Vosolsobě
 
