@@ -71,7 +71,7 @@ assay <- cbind(assay0,Repl)
 assay$pmolPM[160] <- NA
 ```
 
-# Fit of asymptotic growth curve to the data 
+### Fit of asymptotic growth curve to the data 
 
 ```r
 outable <- data.frame(Date=NULL,Day=NULL,Gene=NULL,EST=NULL,NPA=NULL,Asym=NULL,R0=NULL,lrc=NULL)
