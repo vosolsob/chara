@@ -10,6 +10,10 @@ pdf_document: default
   
 # ANALYSIS OF RNA-seq LIBRARIES
 
+Quantification of RNA-seq libraries were computed on METACENRUM computer cluster. BASH scripts are presented.
+
+### Path specification
+
 ```sh
 dir="/storage/brno3-cerit/home/vosolsob/Exprese"
 cd $dir
