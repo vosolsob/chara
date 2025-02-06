@@ -13,11 +13,8 @@ pdf_document: default
 ## Loading a libraries
 
 ```r
-require(CircStats)
-require(circular)
-require(bpnreg)
-require(plotrix)
-require(boot)
+library(lme4)
+library(emmeans)
 ```
 
 
@@ -133,3 +130,33 @@ dev.off()
 
 
 ![Boxplot of streaming](End_tracking.pdf)
+
+
+## Statistical analysis 
+
+```r
+tr23 <- as.factor(tr23)
+pid3 <- as.factor(pid3)
+mic3 <- as.factor(paste(tr23,con3,mid3,sep="_"))
+cer3 <- as.factor(paste(tr23,con3,mid3,cel3,sep="_"))
+
+m1 <- lmer(log(vel3)~ tr23 + (1|mic3/cer3))
+m2 <- lmer(log(vel3)~ (1|mic3/cer3))
+anova(m1,m2)
+# p = 0.02318 *
+
+emm <- emmeans(m1, ~tr23)
+pairs(emm)
+
+ contrast         estimate    SE df t.ratio p.value
+ ba 0.1 - ba 1     -0.1057 0.195 13  -0.541  0.9811
+ ba 0.1 - dmso 0    0.0964 0.169 13   0.570  0.9773
+ ba 0.1 - iaa 0.1  -0.3857 0.195 13  -1.975  0.3296
+ ba 0.1 - iaa 1    -0.3201 0.195 13  -1.639  0.5005
+ ba 1 - dmso 0      0.2021 0.169 13   1.195  0.7543
+ ba 1 - iaa 0.1    -0.2799 0.195 13  -1.433  0.6188
+ ba 1 - iaa 1      -0.2143 0.195 13  -1.097  0.8049
+ dmso 0 - iaa 0.1  -0.4820 0.169 13  -2.850  0.0840
+ dmso 0 - iaa 1    -0.4164 0.169 13  -2.462  0.1597
+ iaa 0.1 - iaa 1    0.0656 0.195 13   0.336  0.9969
+```
