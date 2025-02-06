@@ -10,9 +10,111 @@ pdf_document: default
   
 # ANALYSIS OF RNA-seq LIBRARIES
 
+```sh
+dir="/storage/brno3-cerit/home/vosolsob/Exprese"
+cd $dir
+```
 
+## Mapping of RNA-seq reads by STAR to genome of *Chara braunii*
 
-## Import of dataset and its adaptation
+### genome index for STAR
+
+```sh
+qsub -N gind -l select=1:ncpus=40:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir} -q ibot
+echo $dir
+module add star-2.7.7a
+STAR --runThreadN 40 --runMode genomeGenerate --genomeDir ${dir}/genind --genomeFastaFiles ${dir}/genome/GCA_003427395.1_Cbr_1.0_genomic.fna --sjdbGTFfile ${dir}/genome/GCA_003427395.1_Cbr_1.0_genomic.gtf
+```
+
+### Alignment of reads by STAR
+
+```sh
+thr=10
+
+# first dataset
+gz="no"
+suffix=""
+
+manifest="PE"
+ndb=`grep -c . manifest${manifest}.tsv`
+qsub -J 1-${ndb} -N mapping -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} star_sub-2.0.sh
+manifest="SI"
+ndb=`grep -c . manifest${manifest}.tsv`
+qsub -J 1-${ndb} -N mapping -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} star_sub-2.0.sh
+# second dataset
+gz="yes"
+suffix="_orig"
+
+manifest="PE"
+ndb=`grep -c . manifest${manifest}${suffix}.tsv`
+qsub -J 1-${ndb} -N mapping -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} star_sub-2.0.sh
+manifest="SI"
+ndb=`grep -c . manifest${manifest}${suffix}.tsv`
+qsub -J 1-${ndb} -N mapping -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} star_sub-2.0.sh```
+```
+
+## Quantification of STAR alignments by RSEM
+
+### genome index for RSEM
+
+```sh
+qsub -N trind
+module add rsem/1.3.3
+rsem-prepare-reference --gtf ${dir}/genome/GCA_003427395.1_Cbr_1.0_genomic.gtf ${dir}/genome/GCA_003427395.1_Cbr_1.0_genomic.fna ${dir}/rsemind/rsemind
+```
+
+### Quantification by RSEM
+
+```sh
+thr=4
+
+# first dataset
+gz="no"
+suffix=""
+
+manifest="PE"
+ndb=`grep -c . manifest${manifest}.tsv`
+qsub -J 1-${ndb} -N quant -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} rsem_sub.sh
+
+manifest="SI"
+ndb=`grep -c . manifest${manifest}.tsv`
+qsub -J 1-${ndb} -N quant -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} rsem_sub.sh
+
+# second dataset
+gz="yes"
+suffix="_orig"
+
+manifest="PE"
+ndb=`grep -c . manifest${manifest}${suffix}.tsv`
+qsub -J 1-${ndb} -N quant -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} rsem_sub.sh
+
+manifest="SI"
+ndb=`grep -c . manifest${manifest}${suffix}.tsv`
+qsub -J 1-${ndb} -N quant -l select=1:ncpus=${thr}:mem=50gb -l walltime=24:00:00 -j oe -v dir=${dir},thr=${thr},manifest=${manifest},gz=${gz},suffix=${suffix} rsem_sub.sh
+```
+
+### Merging of individual abundancies quantified by RSEM
+
+```sh
+dir="/storage/brno12-cerit/home/vosolsob/Exprese"
+cd $dir/rsem
+
+lf=(`ls *genes.results`)
+cut -f 1 $lf > profile
+for f in ${lf[*]}
+do
+echo "Processing $f" # always double quote "$f" filename
+#wc -l $f
+name=`echo $f | cut -d "_" -f 1`
+cut -f 6 $f | sed -e "s/TPM/${name}/" | paste profile - > profile2
+rm profile
+mv profile2 profile
+done
+```
+
+## Visualisation of transcriptomic profiles in R
+
+### Import of dataset and its adaptation
 
 ```r
 profile <- read.table("profile",header=T)
@@ -32,7 +134,7 @@ dbs_id <- match(dbs,db.list$Accession)
 vars <- db.list$Sample[dbs_id]
 ```
 
-## Barplot of expression, filtered TPM > 0.5
+### Barplot of expression, filtered TPM > 0.5
 
 ```r
 pdf("profiles_veg_ncbi_0.5.pdf",width=12,height=6)
