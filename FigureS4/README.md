@@ -164,6 +164,8 @@ par(xpd=F)
 dev.off()
 ```
 
+![Barplot of PIN gene expression](profiles_veg_ncbi_0.5.pdf)
+
 
 
 
